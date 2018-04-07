@@ -20,7 +20,7 @@ public class Person {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;
+	private Long id;
 	@Column(length=20, unique=true)
 	private String login;
 	@Column(length=20)
@@ -52,13 +52,13 @@ public class Person {
 	/**
 	 * @return the id
 	 */
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	/**

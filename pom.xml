@@ -43,6 +43,11 @@
 			<artifactId>spring-orm</artifactId>
 			<version>${spring-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>2.2.2</version>
+		</dependency>
 
 		<!-- Convert object into best fit client and vice versa -->
 		<dependency>

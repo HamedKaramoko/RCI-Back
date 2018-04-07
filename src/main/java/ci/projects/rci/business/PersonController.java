@@ -19,11 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ci.projects.rci.dao.PersonDAO;
 import ci.projects.rci.model.Person;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * @author hamedkaramoko
  *
  */
+@Api(value = "PersonController", description = "REST APIs related to Person Entity!!!!")
 @RestController
 @RequestMapping(value="/person")
 public class PersonController{
@@ -32,14 +35,16 @@ public class PersonController{
 	private PersonDAO personDAO;
 
 	@Transactional
+	@ApiOperation(value="Save one person", response=Person.class)
 	@RequestMapping(method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> saveUser(@RequestBody Person personToSave) {
-		personToSave.setId(0);
+		personToSave.setId(null);
 		Person savedPerson = personDAO.save(personToSave);
 		return new ResponseEntity<Person>(savedPerson, HttpStatus.CREATED);
 	}
 
 	@Transactional
+	@ApiOperation(value="Update one person", response=Person.class)
 	@RequestMapping(method=RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> updateUser(@RequestBody Person personToUpdate) {
 		Person updatedPerson = personDAO.update(personToUpdate);
@@ -47,6 +52,7 @@ public class PersonController{
 	}
 
 	@Transactional
+	@ApiOperation(value="Delete one person")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<String> deleteUser(@RequestParam("id") long idPersonToDelete) {
 		Person deletedPerson = personDAO.delete(idPersonToDelete);
@@ -54,6 +60,7 @@ public class PersonController{
 	}
 
 	@Transactional
+	@ApiOperation(value="Get one person", response=Person.class)
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> getUser(@PathVariable("id") long id) {
 		Person personFound = personDAO.get(id);
@@ -62,6 +69,7 @@ public class PersonController{
 	}
 
 	@Transactional
+	@ApiOperation(value="Get all persons", response=Person.class)
 	@RequestMapping(value="/list", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<List<Person>> getAllUsers() {
 		List<Person> persons = personDAO.getAll();

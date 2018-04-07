@@ -18,7 +18,7 @@ public class Service {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private long id;
+	private Long id;
 	@Column(length=50, unique=true)
 	private String label;
 	@Column(length=200)
@@ -31,7 +31,6 @@ public class Service {
 		super();
 	}
 	/**
-	 * @param id
 	 * @param label
 	 * @param cost
 	 */
@@ -41,7 +40,6 @@ public class Service {
 		this.cost = cost;
 	}
 	/**
-	 * @param id
 	 * @param label
 	 * @param description
 	 * @param cost
@@ -55,13 +53,13 @@ public class Service {
 	/**
 	 * @return the id
 	 */
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	/**

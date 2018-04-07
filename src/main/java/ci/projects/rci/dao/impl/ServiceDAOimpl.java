@@ -43,7 +43,7 @@ public class ServiceDAOimpl implements ServiceDAO {
 	}
 
 	public List<Service> getAll() {
-		return em.createQuery("SELECT s FROM service s", Service.class).getResultList();
+		return em.createQuery("SELECT s FROM Service s", Service.class).getResultList();
 	}
 
 }
