@@ -1,0 +1,2 @@
+insert into Person (email, firstname, gender, login, password, surname, id) values ('a@b.c', 'Hamed', 'MALE', 'hamedkaramoko', '', 'KARAMOKO', '1');
+insert into Person (email, firstname, gender, login, password, surname, id) values ('d@e.f', 'Mariama', 'FEMALE', 'yusufkaramoko', '','KARAMOKO', '2');

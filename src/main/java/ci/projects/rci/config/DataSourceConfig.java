@@ -1,10 +1,8 @@
 /**
  * 
  */
-package ci.projects.rci.config.datasource;
+package ci.projects.rci.config;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -14,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -33,36 +32,38 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @PropertySource("classpath:data-source.properties")
-@EnableTransactionManagement
 public class DataSourceConfig {
 
 	@Autowired
 	private Environment env;
 
 	// For embedded database
-	/*@Bean
+	@Bean(destroyMethod="shutdown")
+	@Profile("TEST")
 	public DataSource dataSource() {
 		return new EmbeddedDatabaseBuilder()
 				.setType(EmbeddedDatabaseType.H2)
 				.addScript("classpath:schema.sql")
-				//.addScript("classpath:test-data.sql")
+				.addScript("classpath:test-data.sql")
 				.build();
-	}*/
+	}
 
-	/*@Bean
-	public DataSource h2DataSource() {
+	@Bean
+	@Profile("DEV")
+	public DataSource DataSourceDEV() {
 		BasicDataSource bds = new BasicDataSource();
-		bds.setDriverClassName(env.getProperty("h2.embedded.driver_class_name"));
-		bds.setUrl(env.getProperty("jdbc:h2:tcp://localhost/~/RCI_DB"));
-		bds.setUsername(env.getProperty("h2.embedded.username"));
-		bds.setPassword(env.getProperty("h2.embedded.password"));
+		bds.setDriverClassName("org.h2.Driver");
+		bds.setUrl("jdbc:h2:tcp://localhost/~/RCI_DB;DB_CLOSE_DELAY=-1");
+		bds.setUsername("sa");
+		bds.setPassword("");
 		bds.setInitialSize(5);
 		bds.setMaxActive(10);
 		return bds;
-	}*/
+	}
 
 	@Bean
-	public DataSource mySqlDataSource() {
+	@Profile("QA")
+	public DataSource DataSourceQA() {
 		BasicDataSource bds = new BasicDataSource();
 		bds.setDriverClassName(env.getProperty("mysql.datasource.driver-class-name"));
 		bds.setUrl(env.getProperty("mysql.datasource.url"));
@@ -72,16 +73,32 @@ public class DataSourceConfig {
 		bds.setMaxActive(10);
 		return bds;
 	}
-
-	private Properties getJpaProperties(){
-		Properties jpaProperties = new Properties();
-		jpaProperties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-		jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-		return jpaProperties;
+	
+	@Bean
+	@Profile("TEST")
+	public JpaVendorAdapter JpaVendorAdapterTEST() {
+		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+		adapter.setDatabase(Database.H2);
+		adapter.setShowSql(true);
+		adapter.setGenerateDdl(false);
+		adapter.setDatabasePlatform("org.hibernate.dialect.H2Dialect");
+		return adapter;
+	}
+	
+	@Bean
+	@Profile("DEV")
+	public JpaVendorAdapter JpaVendorAdapterDEV() {
+		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+		adapter.setDatabase(Database.H2);
+		adapter.setShowSql(true);
+		adapter.setGenerateDdl(false);
+		adapter.setDatabasePlatform("org.hibernate.dialect.H2Dialect");
+		return adapter;
 	}
 
 	@Bean
-	public JpaVendorAdapter mySqlJpaVendorAdapter() {
+	@Profile("QA")
+	public JpaVendorAdapter mySqlJpaVendorAdapterQA() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setDatabase(Database.MYSQL);
 		adapter.setShowSql(true);
@@ -89,24 +106,57 @@ public class DataSourceConfig {
 		adapter.setDatabasePlatform("org.hibernate.dialect.MySQL5InnoDBDialect");
 		return adapter;
 	}
-
-	/*@Bean
-	//@Profile("DEV")
-	public JpaVendorAdapter h2JpaVendorAdapter() {
-		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-		adapter.setDatabase(Database.H2);
-		adapter.setShowSql(true);
-		adapter.setGenerateDdl(false);
-		adapter.setDatabasePlatform("org.hibernate.dialect.H2Dialect");
-		return adapter;
-	}*/
-
+	
+	private Properties getJpaPropertiesTEST(){
+		Properties jpaProperties = new Properties();
+		jpaProperties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+		jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+		return jpaProperties;
+	}
+	
+	private Properties getJpaPropertiesDEV(){
+		Properties jpaProperties = new Properties();
+		jpaProperties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+		jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+		return jpaProperties;
+	}
+	
+	private Properties getJpaPropertiesQA(){
+		Properties jpaProperties = new Properties();
+		jpaProperties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+		jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+		return jpaProperties;
+	}
+	
 	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
+	@Profile("TEST")
+	public LocalContainerEntityManagerFactoryBean entityManagerFactoryTEST(DataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
 		LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
 		emfb.setDataSource(dataSource);
 		emfb.setJpaVendorAdapter(jpaVendorAdapter);
-		emfb.setJpaProperties(getJpaProperties());
+		emfb.setJpaProperties(getJpaPropertiesTEST());
+		emfb.setPackagesToScan("ci.projects.rci.model");
+		return emfb;
+	}
+	
+	@Bean
+	@Profile("DEV")
+	public LocalContainerEntityManagerFactoryBean entityManagerFactoryDEV(DataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
+		LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
+		emfb.setDataSource(dataSource);
+		emfb.setJpaVendorAdapter(jpaVendorAdapter);
+		emfb.setJpaProperties(getJpaPropertiesDEV());
+		emfb.setPackagesToScan("ci.projects.rci.model");
+		return emfb;
+	}
+
+	@Bean
+	@Profile("QA")
+	public LocalContainerEntityManagerFactoryBean entityManagerFactoryQA(DataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
+		LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
+		emfb.setDataSource(dataSource);
+		emfb.setJpaVendorAdapter(jpaVendorAdapter);
+		emfb.setJpaProperties(getJpaPropertiesQA());
 		emfb.setPackagesToScan("ci.projects.rci.model");
 		return emfb;
 	}

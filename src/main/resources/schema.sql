@@ -1,15 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 4.7.7
--- https://www.phpmyadmin.net/
---
--- Hôte : localhost:8889
--- Généré le :  sam. 31 mars 2018 à 11:29
--- Version du serveur :  5.6.38
--- Version de PHP :  7.2.1
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
 --
 -- Base de données :  `RCI_DB`
 --
@@ -21,14 +9,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `Person` (
-  `id` int(11) NOT NULL,
-  `login` varchar(20) DEFAULT NULL,
+  `id` int(11) NOT NULL PRIMARY KEY,
+  `login` varchar(20) DEFAULT NULL UNIQUE,
   `password` varchar(20) NOT NULL,
   `surname` varchar(50) NOT NULL,
   `firstname` varchar(50) NOT NULL,
   `gender` varchar(6) NOT NULL,
-  `email` varchar(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `email` varchar(40) DEFAULT NULL UNIQUE
+);
 
 -- --------------------------------------------------------
 
@@ -37,30 +25,11 @@ CREATE TABLE `Person` (
 --
 
 CREATE TABLE `Service` (
-  `id` int(11) NOT NULL,
-  `label` varchar(20) NOT NULL,
-  `description` varchar(50) NOT NULL,
+  `id` int(11) NOT NULL PRIMARY KEY,
+  `label` varchar(50) NOT NULL UNIQUE,
+  `description` varchar(200) NOT NULL,
   `cost` double NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Index pour les tables déchargées
---
-
---
--- Index pour la table `Person`
---
-ALTER TABLE `Person`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `LOGIN` (`login`),
-  ADD UNIQUE KEY `EMAIL` (`email`);
-
---
--- Index pour la table `Service`
---
-ALTER TABLE `Service`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `LABEL` (`label`);
+);
 
 --
 -- AUTO_INCREMENT pour les tables déchargées

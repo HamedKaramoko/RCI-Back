@@ -29,12 +29,12 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "PersonController", description = "REST APIs related to Person Entity!!!!")
 @RestController
 @RequestMapping(value="/person")
+@Transactional
 public class PersonController{
 	
 	@Autowired
 	private PersonDAO personDAO;
 
-	@Transactional
 	@ApiOperation(value="Save one person", response=Person.class)
 	@RequestMapping(method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> saveUser(@RequestBody Person personToSave) {
@@ -43,7 +43,6 @@ public class PersonController{
 		return new ResponseEntity<Person>(savedPerson, HttpStatus.CREATED);
 	}
 
-	@Transactional
 	@ApiOperation(value="Update one person", response=Person.class)
 	@RequestMapping(method=RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> updateUser(@RequestBody Person personToUpdate) {
@@ -51,7 +50,6 @@ public class PersonController{
 		return new ResponseEntity<Person>(updatedPerson, HttpStatus.ACCEPTED);
 	}
 
-	@Transactional
 	@ApiOperation(value="Delete one person")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<String> deleteUser(@RequestParam("id") long idPersonToDelete) {
@@ -59,7 +57,6 @@ public class PersonController{
 		return new ResponseEntity<String>(deletedPerson.getLogin(), HttpStatus.ACCEPTED);
 	}
 
-	@Transactional
 	@ApiOperation(value="Get one person", response=Person.class)
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> getUser(@PathVariable("id") long id) {
@@ -68,7 +65,6 @@ public class PersonController{
 		return new ResponseEntity<Person>(personFound, httpStatus);
 	}
 
-	@Transactional
 	@ApiOperation(value="Get all persons", response=Person.class)
 	@RequestMapping(value="/list", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<List<Person>> getAllUsers() {

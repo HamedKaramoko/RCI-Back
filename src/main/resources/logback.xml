@@ -14,11 +14,15 @@
 	<logger name="org.springframework" level="WARN" additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
+	<!-- Schema creation output -->
+	<logger name="org.hibernate.SQL" level="WARN" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
 
-<!-- 	<logger name="org.obs.sca.fjord" level="DEBUG" additivity="false"> -->
-<!-- 		<appender-ref ref="STDOUT" /> -->
-<!-- 		<appender-ref ref="SIFT" /> -->
-<!-- 	</logger> -->
+	<!-- <logger name="org.obs.sca.fjord" level="DEBUG" additivity="false"> -->
+	<!-- <appender-ref ref="STDOUT" /> -->
+	<!-- <appender-ref ref="SIFT" /> -->
+	<!-- </logger> -->
 
 	<root level="WARN">
 		<appender-ref ref="STDOUT" />
