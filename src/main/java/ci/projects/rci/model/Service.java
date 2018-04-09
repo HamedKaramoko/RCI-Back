@@ -3,11 +3,15 @@
  */
 package ci.projects.rci.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 /**
  * @author hamedkaramoko
@@ -24,6 +28,9 @@ public class Service {
 	@Column(length=200)
 	private String description;
 	private float cost;
+	
+	@ManyToMany(mappedBy="services")
+	private Set<Person> persons = new HashSet<>();
 	/**
 	 * 
 	 */
@@ -97,5 +104,17 @@ public class Service {
 	 */
 	public void setCost(float cost) {
 		this.cost = cost;
+	}
+	/**
+	 * @return the persons
+	 */
+	public Set<Person> getPersons() {
+		return persons;
+	}
+	/**
+	 * @param persons the persons to set
+	 */
+	public void setPersons(Set<Person> persons) {
+		this.persons = persons;
 	}
 }

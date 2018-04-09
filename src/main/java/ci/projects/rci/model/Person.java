@@ -3,6 +3,10 @@
  */
 package ci.projects.rci.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +14,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 /**
  * @author hamedkaramoko
@@ -34,6 +40,10 @@ public class Person {
 	private Gender gender;
 	@Column(length=40, unique=true)
 	private String email;
+	
+	@ManyToMany(cascade={CascadeType.ALL})
+	@JoinTable(name="Person_Service")
+	private Set<Service> services = new HashSet<>();
 	/**
 	 * 
 	 */
@@ -132,5 +142,17 @@ public class Person {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	/**
+	 * @return the services
+	 */
+	public Set<Service> getServices() {
+		return services;
+	}
+	/**
+	 * @param services the services to set
+	 */
+	public void setServices(Set<Service> services) {
+		this.services = services;
 	}
 }

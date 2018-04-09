@@ -15,7 +15,7 @@
 
 	<context-param>
 		<param-name>spring.profiles.default</param-name>
-		<param-value>TEST</param-value>
+		<param-value>QA</param-value>
 	</context-param>
 
 	<!-- Spring Security -->
