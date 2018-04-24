@@ -155,4 +155,14 @@ public class Person {
 	public void setServices(Set<Service> services) {
 		this.services = services;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Person [id=" + id + ", login=" + login + ", password=" + password + ", surname=" + surname
+				+ ", firstname=" + firstname + ", gender=" + gender + ", email=" + email + ", services=" + services
+				+ "]";
+	}
+	
 }

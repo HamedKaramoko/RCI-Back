@@ -35,6 +35,14 @@ public class PersonController{
 	@Autowired
 	private PersonDAO personDAO;
 
+	/**
+	 * @param personDAO
+	 */
+	public PersonController(PersonDAO personDAO) {
+		super();
+		this.personDAO = personDAO;
+	}
+
 	@ApiOperation(value="Save one person", response=Person.class)
 	@RequestMapping(method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> saveUser(@RequestBody Person personToSave) {
