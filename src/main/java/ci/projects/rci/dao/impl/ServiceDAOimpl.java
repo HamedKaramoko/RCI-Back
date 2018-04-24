@@ -28,13 +28,23 @@ public class ServiceDAOimpl implements ServiceDAO {
 		return serviceToSave;
 	}
 
-	public Service update(Service serviceToSave) {
-		return em.merge(serviceToSave);
+	public Service update(Service serviceToUpdate) {
+		Service service = null;
+		if(serviceToUpdate.getId() == null){
+			return null;
+		}
+		service = get(serviceToUpdate.getId());
+		if(service == null){
+			return null;
+		}
+		return em.merge(serviceToUpdate);
 	}
 
 	public Service delete(long idServiceToDelete) {
 		Service serviceToDelete = get(idServiceToDelete);
-		em.remove(serviceToDelete);
+		if(serviceToDelete != null){
+			em.remove(serviceToDelete);
+		}
 		return serviceToDelete;
 	}
 

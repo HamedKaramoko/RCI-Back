@@ -29,13 +29,23 @@ public class PersonDAOImpl implements PersonDAO {
 		return personToSave;
 	}
 
-	public Person update(Person personToSave) {
-		return em.merge(personToSave);
+	public Person update(Person personToUpdate) {
+		Person person = null;
+		if(personToUpdate.getId() == null){
+			return null;
+		}
+		person = get(personToUpdate.getId());
+		if(person == null){
+			return null;
+		}
+		return em.merge(personToUpdate);
 	}
 
 	public Person delete(long idPersonToDelete) {
 		Person personToDelete = get(idPersonToDelete);
-		em.remove(personToDelete);
+		if(personToDelete != null){
+			em.remove(personToDelete);
+		}
 		return personToDelete;
 	}
 
