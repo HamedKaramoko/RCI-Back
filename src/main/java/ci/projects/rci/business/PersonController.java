@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ci.projects.rci.dao.PersonDAO;
@@ -32,12 +31,12 @@ import io.swagger.annotations.ApiOperation;
 @Transactional
 public class PersonController{
 	
-	@Autowired
 	private PersonDAO personDAO;
 
 	/**
 	 * @param personDAO
 	 */
+	@Autowired
 	public PersonController(PersonDAO personDAO) {
 		super();
 		this.personDAO = personDAO;
@@ -59,15 +58,15 @@ public class PersonController{
 	}
 
 	@ApiOperation(value="Delete one person")
-	@RequestMapping(value="/{id}", method=RequestMethod.DELETE, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<String> deleteUser(@RequestParam("id") long idPersonToDelete) {
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	public ResponseEntity<String> deleteUser(@PathVariable("id") long idPersonToDelete) {
 		Person deletedPerson = personDAO.delete(idPersonToDelete);
 		return new ResponseEntity<String>(deletedPerson.getLogin(), HttpStatus.ACCEPTED);
 	}
 
 	@ApiOperation(value="Get one person", response=Person.class)
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Person> getUser(@PathVariable("id") long id) {
+	public ResponseEntity<Person> getUser(@PathVariable("id") final long id) {
 		Person personFound = personDAO.get(id);
 		HttpStatus httpStatus = (personFound != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 		return new ResponseEntity<Person>(personFound, httpStatus);
@@ -77,7 +76,7 @@ public class PersonController{
 	@RequestMapping(value="/list", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<List<Person>> getAllUsers() {
 		List<Person> persons = personDAO.getAll();
-		HttpStatus httpStatus = (persons != null && !persons.isEmpty()) ? HttpStatus.FOUND : HttpStatus.NOT_FOUND;
+		HttpStatus httpStatus = (persons != null && !persons.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 		return new ResponseEntity<List<Person>>(persons, httpStatus);
 	}
 

@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+//import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,6 +33,7 @@ import ci.projects.rci.model.Person;
 @ContextConfiguration(loader=AnnotationConfigContextLoader.class , classes= {RootConfig.class})
 @Transactional
 @Rollback(true)
+//@SuiteClasses
 public class PersonDAOImplTest {
 
 	@PersistenceContext
