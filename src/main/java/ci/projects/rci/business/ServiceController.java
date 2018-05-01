@@ -63,7 +63,7 @@ public class ServiceController {
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Service> getService(@PathVariable("id") long id) {
 		Service serviceGetted = serviceDAO.get(id);
-		HttpStatus httpStatus = serviceGetted != null ? HttpStatus.FOUND : HttpStatus.NOT_FOUND;
+		HttpStatus httpStatus = serviceGetted != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 		return new ResponseEntity<Service>(serviceGetted, httpStatus);
 	}
 
@@ -72,7 +72,7 @@ public class ServiceController {
 	@RequestMapping(value="/list", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<List<Service>> getAllService() {
 		List<Service> servicesGetted = serviceDAO.getAll();
-		HttpStatus httpStatus = (servicesGetted != null && !servicesGetted.isEmpty()) ? HttpStatus.FOUND : HttpStatus.NOT_FOUND;
+		HttpStatus httpStatus = (servicesGetted != null && !servicesGetted.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 		return new ResponseEntity<List<Service>>(servicesGetted, httpStatus);
 	}
 
