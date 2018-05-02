@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ci.projects.hk</groupId>
@@ -9,6 +10,7 @@
 	<description>RCI</description>
 	<properties>
 		<spring-version>4.3.14.RELEASE</spring-version>
+		<spring-security-version>4.2.5.RELEASE</spring-security-version>
 		<swagger-version>2.8.0</swagger-version>
 		<junit.version>4.12</junit.version>
 		<skipTests>false</skipTests>
@@ -131,6 +133,17 @@
 			<version>${swagger-version}</version>
 		</dependency>
 
+		<!-- Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring-security-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring-security-version}</version>
+		</dependency>
 
 
 		<!-- TESTS -->
@@ -178,7 +191,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Just for compile time. Target servlet container will provide it -->
+		<!-- Target servlet container will provide it -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
