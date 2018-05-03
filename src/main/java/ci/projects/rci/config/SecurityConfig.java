@@ -31,8 +31,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(SWAGGER_PATHS).permitAll()
 				.anyRequest().authenticated()
 				.and()
-			.formLogin().and()
-			.httpBasic();
+			.formLogin()
+				.and()
+			.httpBasic()
+				.realmName("RCI");
 	}
 
 }
