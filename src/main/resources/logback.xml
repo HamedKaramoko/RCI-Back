@@ -14,6 +14,9 @@
 	<logger name="org.springframework" level="WARN" additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
+	<logger name="org.springframework.security" level="INFO" additivity="false">
+		<appender-ref ref="STDOUT" />
+	</logger>
 	<!-- Schema creation output -->
 	<logger name="org.hibernate.SQL" level="WARN" additivity="false">
 		<appender-ref ref="STDOUT" />
