@@ -30,7 +30,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(value="/person")
 @Transactional
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasRole('ADMIN')")
 public class PersonController{
 	
 	private PersonDAO personDAO;
