@@ -6,6 +6,7 @@ package ci.projects.rci.dao.impl;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
@@ -51,6 +52,15 @@ public class PersonDAOImpl implements PersonDAO {
 
 	public Person get(long id) {
 		return em.find(Person.class, id);
+	}
+	
+	public Person getByLogin(String login) {
+		try {
+			return em.createQuery("SELECT p FROM Person p WHERE p.login = :login", Person.class).setParameter("login", login).getSingleResult();
+		}catch(NoResultException nRE) {
+			return null;
+		}
+		
 	}
 
 	public List<Person> getAll() {

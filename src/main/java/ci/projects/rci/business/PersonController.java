@@ -30,7 +30,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(value="/person")
 @Transactional
-@PreAuthorize("hasRole('ADMIN')")
+//@PreAuthorize("hasRole('ADMIN')")
 public class PersonController{
 	
 	private PersonDAO personDAO;
@@ -70,6 +70,14 @@ public class PersonController{
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> getUser(@PathVariable("id") final long id) {
 		Person personFound = personDAO.get(id);
+		HttpStatus httpStatus = (personFound != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+		return new ResponseEntity<Person>(personFound, httpStatus);
+	}
+	
+	@ApiOperation(value="Get one person by his login", response=Person.class)
+	@RequestMapping(value="/{login}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Person> getUserByLogin(@PathVariable("login") final String login) {
+		Person personFound = personDAO.getByLogin(login);
 		HttpStatus httpStatus = (personFound != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 		return new ResponseEntity<Person>(personFound, httpStatus);
 	}

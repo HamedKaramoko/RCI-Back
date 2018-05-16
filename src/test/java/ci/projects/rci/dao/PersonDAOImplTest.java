@@ -174,10 +174,15 @@ public class PersonDAOImplTest {
 		Person personSaved = personDAO.save(p1);
 		Person personFound = personDAO.get(personSaved.getId());
 		
+		Person personFoundByLogin = personDAO.getByLogin(personSaved.getLogin());
+		
 		assertThat(personFound.getId(), is(personSaved.getId()));
 		assertThat(personFound.getLogin(), is(personSaved.getLogin()));
 		assertThat(personFound.getPassword(), is(personSaved.getPassword()));
 		assertThat(personFound.getEmail(), is(personSaved.getEmail()));
+		
+		// Assert that the result got by id is the same as the one got by login
+		assertThat(personFound.getId(), is(personFoundByLogin.getId()));
 	}
 	
 	
@@ -187,7 +192,10 @@ public class PersonDAOImplTest {
 	@Test
 	public void getNotExistingPerson() {
 		Person personFound = personDAO.get(0);
+		Person personFoundByLogin = personDAO.getByLogin("nothing");
+		
 		assertThat(personFound, is(nullValue()));
+		assertThat(personFoundByLogin, is(nullValue()));
 	}
 	
 	/****************************GET ALL***************************/

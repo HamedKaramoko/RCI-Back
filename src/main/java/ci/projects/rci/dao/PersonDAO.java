@@ -17,6 +17,7 @@ public interface PersonDAO {
 	Person update(Person personToSave);
 	Person delete(long idPersonToDelete);
 	Person get(long id);
+	Person getByLogin(String login);
 	List<Person> getAll();
 
 }
