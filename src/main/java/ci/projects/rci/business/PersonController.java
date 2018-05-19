@@ -75,7 +75,7 @@ public class PersonController{
 	}
 	
 	@ApiOperation(value="Get one person by his login", response=Person.class)
-	@RequestMapping(value="/{login}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value="/login/{login}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> getUserByLogin(@PathVariable("login") final String login) {
 		Person personFound = personDAO.getByLogin(login);
 		HttpStatus httpStatus = (personFound != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND;

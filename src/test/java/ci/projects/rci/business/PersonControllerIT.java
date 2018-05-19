@@ -147,6 +147,23 @@ public class PersonControllerIT {
 		.andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(savedPerson.getLogin())))
 		.andExpect(MockMvcResultMatchers.jsonPath("$.password", Is.is(savedPerson.getPassword())));
 	}
+	
+	/**
+	 * Test method for {@link ci.projects.rci.business.PersonController#getUser(long)}.
+	 * @throws Exception 
+	 */
+	@Test
+	public void personFoundByLogin() throws Exception {
+		Person p = new Person("Hamed", "");
+		Person savedPerson = this.personDAO.save(p);
+		mockMvc.perform(
+				get("/person/login/{login}", savedPerson.getLogin())
+				.accept(MediaType.APPLICATION_JSON_VALUE))
+		.andDo(MockMvcResultHandlers.print())
+		.andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.login", Matchers.is(savedPerson.getLogin())))
+		.andExpect(MockMvcResultMatchers.jsonPath("$.password", Is.is(savedPerson.getPassword())));
+	}
 
 	/**
 	 * Test method for {@link ci.projects.rci.business.PersonController#getAllUsers()}.
