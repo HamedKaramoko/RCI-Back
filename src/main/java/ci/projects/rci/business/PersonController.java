@@ -30,7 +30,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(value="/person")
 @Transactional
-//@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("isAuthenticated()")
 public class PersonController{
 	
 	private PersonDAO personDAO;
@@ -61,6 +61,7 @@ public class PersonController{
 
 	@ApiOperation(value="Delete one person")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<String> deleteUser(@PathVariable("id") long idPersonToDelete) {
 		Person deletedPerson = personDAO.delete(idPersonToDelete);
 		return new ResponseEntity<String>(deletedPerson.getLogin(), HttpStatus.ACCEPTED);
@@ -68,6 +69,7 @@ public class PersonController{
 
 	@ApiOperation(value="Get one person", response=Person.class)
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Person> getUser(@PathVariable("id") final long id) {
 		Person personFound = personDAO.get(id);
 		HttpStatus httpStatus = (personFound != null) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
@@ -84,6 +86,7 @@ public class PersonController{
 
 	@ApiOperation(value="Get all persons", response=Person.class)
 	@RequestMapping(value="/list", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<List<Person>> getAllUsers() {
 		List<Person> persons = personDAO.getAll();
 		HttpStatus httpStatus = (persons != null && !persons.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
