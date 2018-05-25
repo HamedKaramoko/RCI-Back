@@ -1,9 +1,14 @@
 pipeline {
     agent { docker { image 'maven:latest' } }
     stages {
-        stage('build') {
+        stage('checkMavenVersion') {
             steps {
                 sh 'mvn --version'
+            }
+        }
+        stage('build') {
+            steps {
+                sh 'mvn -B clean package'
             }
         }
     }
