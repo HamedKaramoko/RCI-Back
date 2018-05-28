@@ -36,7 +36,7 @@ public class ServiceController {
 	@Transactional
 	@ApiOperation(value="Save one service", response=Service.class)
 	@RequestMapping(method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Service> saveService(@RequestBody Service serviceToSave) {
+	public ResponseEntity<Service> save(@RequestBody Service serviceToSave) {
 		serviceToSave.setId(null);
 		Service serviceSaved = serviceDAO.save(serviceToSave);
 		return new ResponseEntity<Service>(serviceSaved, HttpStatus.CREATED);
@@ -45,7 +45,7 @@ public class ServiceController {
 	@Transactional
 	@ApiOperation(value="Update one service", response=Service.class)
 	@RequestMapping(method=RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Service> updateService(@RequestBody Service serviceToUpdate) {
+	public ResponseEntity<Service> update(@RequestBody Service serviceToUpdate) {
 		Service serviceUpdated = serviceDAO.update(serviceToUpdate);
 		return new ResponseEntity<Service>(serviceUpdated, HttpStatus.OK);
 	}
@@ -53,7 +53,7 @@ public class ServiceController {
 	@Transactional
 	@ApiOperation(value="Delete one service")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<String> deleteService(@PathVariable("id") long idServiceToDelete) {
+	public ResponseEntity<String> delete(@PathVariable("id") long idServiceToDelete) {
 		Service serviceDeleted = serviceDAO.delete(idServiceToDelete);
 		return new ResponseEntity<String>(serviceDeleted.getLabel(), HttpStatus.OK);
 	}
@@ -61,8 +61,17 @@ public class ServiceController {
 	@Transactional
 	@ApiOperation(value="Get one service", response=Service.class)
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Service> getService(@PathVariable("id") long id) {
+	public ResponseEntity<Service> get(@PathVariable("id") long id) {
 		Service serviceGetted = serviceDAO.get(id);
+		HttpStatus httpStatus = serviceGetted != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+		return new ResponseEntity<Service>(serviceGetted, httpStatus);
+	}
+	
+	@Transactional
+	@ApiOperation(value="Get service by its name", response=Service.class)
+	@RequestMapping(value="/name/{name}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Service> getByName(@PathVariable("name") String name) {
+		Service serviceGetted = serviceDAO.getByName(name);
 		HttpStatus httpStatus = serviceGetted != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 		return new ResponseEntity<Service>(serviceGetted, httpStatus);
 	}
@@ -70,7 +79,7 @@ public class ServiceController {
 	@Transactional
 	@ApiOperation(value="Get all services", response=Service.class)
 	@RequestMapping(value="/list", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<List<Service>> getAllService() {
+	public ResponseEntity<List<Service>> getAll() {
 		List<Service> servicesGetted = serviceDAO.getAll();
 		HttpStatus httpStatus = (servicesGetted != null && !servicesGetted.isEmpty()) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
 		return new ResponseEntity<List<Service>>(servicesGetted, httpStatus);

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,8 +31,10 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(value="/person")
 @Transactional
-@PreAuthorize("isAuthenticated()")
 public class PersonController{
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	private PersonDAO personDAO;
 
@@ -48,6 +51,7 @@ public class PersonController{
 	@RequestMapping(method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<Person> saveUser(@RequestBody Person personToSave) {
 		personToSave.setId(null);
+		personToSave.setPassword(this.passwordEncoder.encode(personToSave.getPassword()));
 		Person savedPerson = personDAO.save(personToSave);
 		return new ResponseEntity<Person>(savedPerson, HttpStatus.CREATED);
 	}

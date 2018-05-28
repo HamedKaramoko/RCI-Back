@@ -23,11 +23,13 @@ public class ServiceDAOimpl implements ServiceDAO {
 	@PersistenceContext
 	private EntityManager em;
 
+	@Override
 	public Service save(Service serviceToSave) {
 		em.persist(serviceToSave);
 		return serviceToSave;
 	}
 
+	@Override
 	public Service update(Service serviceToUpdate) {
 		Service service = null;
 		if(serviceToUpdate.getId() == null){
@@ -40,6 +42,7 @@ public class ServiceDAOimpl implements ServiceDAO {
 		return em.merge(serviceToUpdate);
 	}
 
+	@Override
 	public Service delete(long idServiceToDelete) {
 		Service serviceToDelete = get(idServiceToDelete);
 		if(serviceToDelete != null){
@@ -48,10 +51,17 @@ public class ServiceDAOimpl implements ServiceDAO {
 		return serviceToDelete;
 	}
 
+	@Override
 	public Service get(long id) {
 		return em.find(Service.class, id);
 	}
+	
+	@Override
+	public Service getByName(String name) {
+		return em.createQuery("SELECT s FROM Person s WHERE p.name = :name", Service.class).setParameter("name", name).getSingleResult();
+	}
 
+	@Override
 	public List<Service> getAll() {
 		return em.createQuery("SELECT s FROM Service s", Service.class).getResultList();
 	}

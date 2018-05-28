@@ -17,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  * @author hamedkaramoko
@@ -30,7 +31,7 @@ public class Person {
 	private Long id;
 	@Column(length=20, unique=true)
 	private String login;
-	@Column(length=20)
+	@Column(length=80)
 	private String password;
 	@Column(length=50)
 	private String surname;
@@ -41,6 +42,10 @@ public class Person {
 	private Gender gender;
 	@Column(length=40, unique=true)
 	private String email;
+
+	@OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true)
+	//@JoinColumn(name="person_id")
+	private Set<Group> roles = new HashSet<>();
 	
 	@ManyToMany(fetch=FetchType.EAGER, cascade={CascadeType.ALL})
 	@JoinTable(name="Person_Service")
@@ -143,6 +148,18 @@ public class Person {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	/**
+	 * @return the roles
+	 */
+	public Set<Group> getRoles() {
+		return roles;
+	}
+	/**
+	 * @param roles the roles to set
+	 */
+	public void setRoles(Set<Group> roles) {
+		this.roles = roles;
 	}
 	/**
 	 * @return the services

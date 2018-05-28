@@ -17,6 +17,7 @@ public interface ServiceDAO {
 	Service update(Service serviceToSave);
 	Service delete(long idServiceToDelete);
 	Service get(long id);
+	Service getByName(String name);
 	List<Service> getAll();
 
 }

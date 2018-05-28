@@ -52,6 +52,13 @@
 			<version>2.2.2</version>
 		</dependency>
 
+		<!-- JWT -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.0</version>
+		</dependency>
+
 		<!-- Convert object into best fit client and vice versa -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
