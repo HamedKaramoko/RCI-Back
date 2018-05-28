@@ -235,7 +235,7 @@
 					<server>TomcatServer</server>
 					<username>admin</username>
 					<password>password</password>
-					<path>/ProdPlus</path>
+					<path>/RCI</path>
 				</configuration>
 			</plugin>
 		</plugins>
