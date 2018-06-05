@@ -214,7 +214,6 @@ public class PersonDAOImplTest {
 		personDAO.save(p3);
 		
 		List<Person> persons = personDAO.getAll();
-		System.out.println(persons);
 		assertThat(persons.size(), is(3));
 	}
 	

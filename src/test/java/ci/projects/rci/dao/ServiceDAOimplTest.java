@@ -184,7 +184,6 @@ public class ServiceDAOimplTest {
 		serviceDAO.save(s3);
 		
 		List<Service> services = serviceDAO.getAll();
-		System.out.println(services);
 		assertThat(services.size(), is(3));
 	}
 	
