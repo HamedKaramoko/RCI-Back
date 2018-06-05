@@ -22,9 +22,13 @@ pipeline {
             }
         }
         stage('SonarQube analysis') {
-			withSonarQubeEnv('My SonarQube Server') {
-			  // requires SonarQube Scanner for Maven 3.2+
-			  sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
+        	tools {
+				sonarQube 'SonarQube Scanner 2.8'
+			}
+  			steps {
+				withSonarQubeEnv('SonarQube Scanner') {
+					sh 'sonar-scanner'
+				}
 			}
         }
         stage('Quality Gate') {
