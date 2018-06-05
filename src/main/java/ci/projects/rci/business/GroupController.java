@@ -46,8 +46,8 @@ public class GroupController {
 	@ApiOperation(value="Delete one group")
 	@RequestMapping(value="/{name}", method=RequestMethod.DELETE)
 	public ResponseEntity<String> delete(@PathVariable("name") String name) {
-		Group deletedGroup = groupDAO.delete(name);
-		return new ResponseEntity<String>(deletedGroup.getName(), HttpStatus.ACCEPTED);
+		groupDAO.delete(name);
+		return new ResponseEntity<String>(HttpStatus.ACCEPTED);
 	}
 	
 	@ApiOperation(value="Get one group by his name", response=Group.class)

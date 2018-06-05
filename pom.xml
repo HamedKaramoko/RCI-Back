@@ -15,6 +15,12 @@
 		<junit.version>4.12</junit.version>
 		<skipTests>false</skipTests>
 		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sonar.host.url>http://sonarqube:9000/</sonar.host.url>
+		<sonar.login>af66aa1f65d93509f993416ec5b5d9290e102b99</sonar.login>
 	</properties>
 	<dependencies>
 		<!-- Application Context (depends on spring-core, spring-expression, spring-aop, 
@@ -184,6 +190,14 @@
 			<version>2.15.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.1</version>
+		</dependency>
+
+
+
 		<!-- For handling json data while testing -->
 		<dependency>
 			<groupId>com.jayway.jsonpath</groupId>
@@ -211,10 +225,21 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.21.0</version>
+				<configuration>
+					<forkCount>3</forkCount>
+					<reuseForks>true</reuseForks>
+					<argLine>-Xmx1024m</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.21.0</version>
 				<configuration>
 					<skipITs>${skipTests}</skipITs>
+					<argLine>${argLine} -Xmx4096m ${itCoverageAgent}</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -235,8 +260,49 @@
 					<server>TomcatServer</server>
 					<username>admin</username>
 					<password>password</password>
-					<path>/ProdPlus</path>
+					<path>/RCI</path>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.1</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+<!-- 								implementation is needed only for Maven 2 -->
+								<rule implementation="org.jacoco.maven.RuleConfiguration">
+									<element>BUNDLE</element>
+									<limits>
+<!-- 										implementation is needed only for Maven 2 -->
+										<limit implementation="org.jacoco.report.check.Limit">
+											<counter>COMPLEXITY</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.001</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
