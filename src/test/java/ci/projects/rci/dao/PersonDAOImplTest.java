@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import  static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
 
 import javax.persistence.EntityManager;
@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 //import org.junit.runners.Suite.SuiteClasses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -66,9 +68,8 @@ public class PersonDAOImplTest {
 	public void nominalSave() {
 		Person p = new Person("Mariama", "");
 		p.setEmail("b@b.b");
-		Person personSaved = personDAO.save(p);
-		assertThat(personSaved.getLogin(), is(p.getLogin()));
-		assertThat(personSaved.getId(), is(notNullValue()));
+		Long id = personDAO.save(p);
+		assertThat(id, is(notNullValue()));
 	}
 
 	/**
@@ -105,34 +106,38 @@ public class PersonDAOImplTest {
 	public void nominalUpdate() {
 		Person p = new Person("Mariama", "");
 		p.setEmail("b@b.b");
-		Person personSaved = personDAO.save(p);
+		Long id = personDAO.save(p);
+		Person personSaved = this.em.find(Person.class, id);
 		
 		personSaved.setEmail("mariama@mariama.ci");
+		personDAO.update(personSaved);
 		
-		Person personUpdated = personDAO.update(personSaved);
+		Person personUpdated = this.em.find(Person.class, id);
 		
-		assertThat(personUpdated.getId(), is(personSaved.getId()));
 		assertThat(personUpdated.getEmail(), is("mariama@mariama.ci"));
 	}
 	
 	/**
-	 * Update non existing person.
-	 * At first a person with a null id and then with an unknown id
+	 * Update with null as Person
 	 */
-	@Test
-	public void updateNotExistingPerson() {
+	@Test(expected=InvalidDataAccessApiUsageException.class)
+	public void updateWithNullPerson() {
+		personDAO.update(null);
+		fail("You cannot update a null person");
 		
+	}
+	
+	/**
+	 * Update non existing person.
+	 */
+	@Test(expected=EmptyResultDataAccessException.class)
+	public void updateNotExistingPerson() {
 		Person person = new Person();
 		person.setId(null);
 		
-		Person personUpdated = personDAO.update(person);
+		personDAO.update(person);
+		fail("You cannot update a non-existing person");
 		
-		assertThat(personUpdated, is(nullValue()));
-		
-		person.setId(0L);
-		personUpdated = personDAO.update(person);
-		
-		assertThat(personUpdated, is(nullValue()));
 	}
 	
 	/****************************DELETE***************************/
@@ -143,22 +148,22 @@ public class PersonDAOImplTest {
 	@Test
 	public void nominalDelete() {
 		Person p = new Person("Mariama", "");
-		Person personSaved = personDAO.save(p);
+		Long id = personDAO.save(p);
 		
-		Person personDeleted = personDAO.delete(personSaved.getId());
+		personDAO.delete(id);
 		
-		assertThat(personDeleted.getId(), is(personSaved.getId()));
+		Person personDeleted = this.em.find(Person.class, id);
+		
+		assertThat(personDeleted, is(nullValue()));
 	}
 	
 	/**
 	 * Delete non existing person
 	 */
-	@Test
+	@Test(expected=InvalidDataAccessApiUsageException.class)
 	public void deleteNotExistingPerson() {
-		
-		Person personDeleted = personDAO.delete(0);
-		
-		assertThat(personDeleted, is(nullValue()));
+		personDAO.delete(0L);
+		fail("You cannot delete a non-existing person");
 	}
 
 
@@ -171,15 +176,16 @@ public class PersonDAOImplTest {
 	public void getExistingPerson() {
 		Person p1 = new Person("test", "test");
 		p1.setEmail("t@t.t");
-		Person personSaved = personDAO.save(p1);
-		Person personFound = personDAO.get(personSaved.getId());
+		Long id = personDAO.save(p1);
 		
-		Person personFoundByLogin = personDAO.getByLogin(personSaved.getLogin());
+		Person personFound = personDAO.get(id);
 		
-		assertThat(personFound.getId(), is(personSaved.getId()));
-		assertThat(personFound.getLogin(), is(personSaved.getLogin()));
-		assertThat(personFound.getPassword(), is(personSaved.getPassword()));
-		assertThat(personFound.getEmail(), is(personSaved.getEmail()));
+		Person personFoundByLogin = personDAO.getByLogin("test");
+		
+		assertThat(personFound.getId(), is(id));
+		assertThat(personFound.getLogin(), is("test"));
+		assertThat(personFound.getPassword(), is("test"));
+		assertThat(personFound.getEmail(), is("t@t.t"));
 		
 		// Assert that the result got by id is the same as the one got by login
 		assertThat(personFound.getId(), is(personFoundByLogin.getId()));
@@ -190,12 +196,18 @@ public class PersonDAOImplTest {
 	 * Attempt to get a non existing person
 	 */
 	@Test
-	public void getNotExistingPerson() {
-		Person personFound = personDAO.get(0);
-		Person personFoundByLogin = personDAO.getByLogin("nothing");
-		
+	public void getNotExistingPersonById() {
+		Person personFound = personDAO.get(0L);
 		assertThat(personFound, is(nullValue()));
-		assertThat(personFoundByLogin, is(nullValue()));
+	}
+	
+	/**
+	 * Attempt to get a non existing person by a login
+	 */
+	@Test(expected=EmptyResultDataAccessException.class)
+	public void getNotExistingPersonByLogin() {
+		personDAO.getByLogin("nothing");
+		fail("There is no person with 'nothing' as login.");
 	}
 	
 	/****************************GET ALL***************************/

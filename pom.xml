@@ -67,6 +67,16 @@
 			<version>0.9.0</version>
 		</dependency>
 
+		<!-- Better assertion in test -->
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.9.1</version>
+			<scope>test</scope>
+		</dependency>
+
+
+
 		<!-- Convert object into best fit client and vice versa -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -166,6 +176,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring-security-version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

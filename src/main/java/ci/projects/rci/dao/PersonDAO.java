@@ -13,10 +13,15 @@ import ci.projects.rci.model.Person;
  */
 public interface PersonDAO {
 	
-	Person save(Person personToSave);
-	Person update(Person personToSave);
-	Person delete(long idPersonToDelete);
-	Person get(long id);
+	Long save(Person personToSave);
+	/**
+	 * @param personToUpdate
+	 * 
+	 * @throws IllegalArgumentException when personToUpdate is null.
+	 */
+	void update(Person personToUpdate);
+	void delete(Long idPersonToDelete);
+	Person get(Long id);
 	Person getByLogin(String login);
 	List<Person> getAll();
 
