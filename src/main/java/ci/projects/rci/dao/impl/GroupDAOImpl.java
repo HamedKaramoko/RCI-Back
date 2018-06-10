@@ -21,16 +21,15 @@ public class GroupDAOImpl implements GroupDAO {
 	private EntityManager em;
 
 	@Override
-	public Group save(Group group) {
+	public Long save(Group group) {
 		em.persist(group);
-		return group;
+		return group.getId();
 	}
 
 	@Override
-	public Group delete(String name) {
-		Group groupToDelete = this.getByName(name);
+	public void delete(Long id) {
+		Group groupToDelete = em.find(Group.class, id);
 		em.remove(groupToDelete);
-		return groupToDelete;
 	}
 
 	@Override

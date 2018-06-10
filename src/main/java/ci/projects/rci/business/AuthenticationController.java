@@ -36,7 +36,17 @@ public class AuthenticationController {
 	
 	@Autowired
 	private AuthenticationService authenticationService;
-	
+
+	/*@Autowired
+	public void setJwtTokenService(JwtTokenService jwtTokenService) {
+		this.jwtTokenService = jwtTokenService;
+	}
+
+	@Autowired
+	public void setAuthenticationService(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
+	}*/
+
 	@ApiOperation(value="Sign In", response=Person.class)
 	@RequestMapping(value="/signin", method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<?> signin(@RequestBody AuthenticationParam authenticationParam) {
@@ -54,7 +64,7 @@ public class AuthenticationController {
 	@RequestMapping(value="/refresh", method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<?> signin(@RequestBody RefreshRequest refreshRequest) {
 		try {
-            JwtTokens tokens = jwtTokenService.refreshJwtToken(refreshRequest.refreshToken);
+            JwtTokens tokens = jwtTokenService.refreshJwtToken(refreshRequest.getRefreshToken());
             return ResponseEntity.ok().body(tokens);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(HttpStatus.UNAUTHORIZED.getReasonPhrase());

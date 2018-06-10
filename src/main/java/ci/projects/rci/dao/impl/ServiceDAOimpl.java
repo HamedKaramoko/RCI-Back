@@ -24,31 +24,24 @@ public class ServiceDAOimpl implements ServiceDAO {
 	private EntityManager em;
 
 	@Override
-	public Service save(Service serviceToSave) {
+	public Long save(Service serviceToSave) {
 		em.persist(serviceToSave);
-		return serviceToSave;
+		return serviceToSave.getId();
 	}
 
 	@Override
-	public Service update(Service serviceToUpdate) {
-		Service service = null;
-		if(serviceToUpdate.getId() == null){
-			return null;
+	public void update(Service serviceToUpdate) {
+		if(serviceToUpdate == null){
+			throw new IllegalArgumentException("The updated service cannot be null.");
 		}
-		service = get(serviceToUpdate.getId());
-		if(service == null){
-			return null;
-		}
-		return em.merge(serviceToUpdate);
+		em.createQuery("SELECT s FROM Service s WHERE s.id = :id", Service.class).setParameter("id", serviceToUpdate.getId()).getSingleResult();
+		em.merge(serviceToUpdate);
 	}
 
 	@Override
-	public Service delete(long idServiceToDelete) {
+	public void delete(long idServiceToDelete) {
 		Service serviceToDelete = get(idServiceToDelete);
-		if(serviceToDelete != null){
-			em.remove(serviceToDelete);
-		}
-		return serviceToDelete;
+		em.remove(serviceToDelete);
 	}
 
 	@Override
@@ -57,8 +50,8 @@ public class ServiceDAOimpl implements ServiceDAO {
 	}
 	
 	@Override
-	public Service getByName(String name) {
-		return em.createQuery("SELECT s FROM Person s WHERE p.name = :name", Service.class).setParameter("name", name).getSingleResult();
+	public Service getByLabel(String label) {
+		return em.createQuery("SELECT s FROM Service s WHERE s.label = :label", Service.class).setParameter("label", label).getSingleResult();
 	}
 
 	@Override

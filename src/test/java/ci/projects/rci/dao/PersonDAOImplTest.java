@@ -56,7 +56,12 @@ public class PersonDAOImplTest {
 	private void insertPerson(){
 		Person p1 = new Person("Hamed", "");
 		p1.setEmail("a@a.a");
-		personDAO.save(p1);
+		savePerson(p1);
+	}
+
+	private Long savePerson(Person p) {
+		em.persist(p);
+		return p.getId();
 	}
 	
 	/****************************SAVE***************************/
@@ -106,7 +111,7 @@ public class PersonDAOImplTest {
 	public void nominalUpdate() {
 		Person p = new Person("Mariama", "");
 		p.setEmail("b@b.b");
-		Long id = personDAO.save(p);
+		Long id = savePerson(p);
 		Person personSaved = this.em.find(Person.class, id);
 		
 		personSaved.setEmail("mariama@mariama.ci");
@@ -148,7 +153,7 @@ public class PersonDAOImplTest {
 	@Test
 	public void nominalDelete() {
 		Person p = new Person("Mariama", "");
-		Long id = personDAO.save(p);
+		Long id = savePerson(p);
 		
 		personDAO.delete(id);
 		
@@ -176,7 +181,7 @@ public class PersonDAOImplTest {
 	public void getExistingPerson() {
 		Person p1 = new Person("test", "test");
 		p1.setEmail("t@t.t");
-		Long id = personDAO.save(p1);
+		Long id = savePerson(p1);
 		
 		Person personFound = personDAO.get(id);
 		
@@ -221,9 +226,9 @@ public class PersonDAOImplTest {
 		Person p2 = new Person("t2", "t2");
 		Person p3 = new Person("t3", "t3");
 		
-		personDAO.save(p1);
-		personDAO.save(p2);
-		personDAO.save(p3);
+		savePerson(p1);
+		savePerson(p2);
+		savePerson(p3);
 		
 		List<Person> persons = personDAO.getAll();
 		assertThat(persons.size(), is(3));

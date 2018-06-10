@@ -21,7 +21,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Authentication authenticate(AuthenticationParam authenticationparam) {
-        UsernamePasswordAuthenticationToken usernameAuthentication = new UsernamePasswordAuthenticationToken(authenticationparam.login, authenticationparam.password);
+        UsernamePasswordAuthenticationToken usernameAuthentication = new UsernamePasswordAuthenticationToken(authenticationparam.getLogin(), authenticationparam.getPassword());
         return authenticationManager.authenticate(usernameAuthentication);
     }
 

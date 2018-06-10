@@ -35,6 +35,13 @@ public class Group {
 		super();
 		this.name = name;
 	}
+	
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
 
 	/**
 	 * @return the name

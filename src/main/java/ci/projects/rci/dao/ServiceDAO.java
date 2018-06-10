@@ -13,11 +13,16 @@ import ci.projects.rci.model.Service;
  */
 public interface ServiceDAO {
 	
-	Service save(Service serviceToSave);
-	Service update(Service serviceToSave);
-	Service delete(long idServiceToDelete);
+	Long save(Service serviceToSave);
+	/**
+	 * @param personToUpdate
+	 * 
+	 * @throws IllegalArgumentException when personToUpdate is null.
+	 */
+	void update(Service serviceToSave);
+	void delete(long idServiceToDelete);
 	Service get(long id);
-	Service getByName(String name);
+	Service getByLabel(String label);
 	List<Service> getAll();
 
 }

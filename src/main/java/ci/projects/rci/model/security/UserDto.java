@@ -9,7 +9,11 @@ import java.util.Collection;
 
 public class UserDto extends User {
 
-    private final Long id;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2814950237758071594L;
+	private final Long id;
     private final String email;
     private final LocalDate lastPasswordResetDate;
 
@@ -23,11 +27,6 @@ public class UserDto extends User {
     @JsonIgnore
     public Long getId() {
         return id;
-    }
-
-    @Override
-    public String getUsername() {
-        return super.getUsername();
     }
 
     public String getEmail() {

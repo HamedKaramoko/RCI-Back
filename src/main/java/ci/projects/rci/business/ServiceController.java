@@ -5,10 +5,14 @@ package ci.projects.rci.business;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,32 +34,37 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/service")
 public class ServiceController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServiceController.class);
+	
 	@Autowired
 	private ServiceDAO serviceDAO;
 
 	@Transactional
 	@ApiOperation(value="Save one service", response=Service.class)
-	@RequestMapping(method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Service> save(@RequestBody Service serviceToSave) {
+	@RequestMapping(method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE})
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> save(@RequestBody Service serviceToSave) {
 		serviceToSave.setId(null);
-		Service serviceSaved = serviceDAO.save(serviceToSave);
-		return new ResponseEntity<Service>(serviceSaved, HttpStatus.CREATED);
+		Long id = serviceDAO.save(serviceToSave);
+		return new ResponseEntity<>(id, HttpStatus.CREATED);
 	}
 
 	@Transactional
 	@ApiOperation(value="Update one service", response=Service.class)
-	@RequestMapping(method=RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Service> update(@RequestBody Service serviceToUpdate) {
-		Service serviceUpdated = serviceDAO.update(serviceToUpdate);
-		return new ResponseEntity<Service>(serviceUpdated, HttpStatus.OK);
+	@RequestMapping(method=RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE})
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> update(@RequestBody Service serviceToUpdate) {
+		serviceDAO.update(serviceToUpdate);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@Transactional
 	@ApiOperation(value="Delete one service")
-	@RequestMapping(value="/{id}", method=RequestMethod.DELETE, produces={MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<String> delete(@PathVariable("id") long idServiceToDelete) {
-		Service serviceDeleted = serviceDAO.delete(idServiceToDelete);
-		return new ResponseEntity<String>(serviceDeleted.getLabel(), HttpStatus.OK);
+		serviceDAO.delete(idServiceToDelete);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@Transactional
@@ -68,11 +77,17 @@ public class ServiceController {
 	}
 	
 	@Transactional
-	@ApiOperation(value="Get service by its name", response=Service.class)
-	@RequestMapping(value="/name/{name}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Service> getByName(@PathVariable("name") String name) {
-		Service serviceGetted = serviceDAO.getByName(name);
-		HttpStatus httpStatus = serviceGetted != null ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+	@ApiOperation(value="Get service by its label", response=Service.class)
+	@RequestMapping(value="/label/{label}", method=RequestMethod.GET, produces={MediaType.APPLICATION_JSON_VALUE})
+	public ResponseEntity<Service> getByLabel(@PathVariable("label") String label) {
+		Service serviceGetted = null;
+		HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+		try {
+			serviceGetted = serviceDAO.getByLabel(label);
+			httpStatus = HttpStatus.OK;
+		}catch (EmptyResultDataAccessException erdae) {
+			LOGGER.info("Service with label '{}' not found", label);
+		}
 		return new ResponseEntity<Service>(serviceGetted, httpStatus);
 	}
 

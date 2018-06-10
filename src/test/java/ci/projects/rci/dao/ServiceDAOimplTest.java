@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,9 +50,9 @@ public class ServiceDAOimplTest {
 	public void tearDown() throws Exception {
 	}
 	
-	private void insertService(){
-		Service s1 = new Service("Others", 10f);
-		serviceDAO.save(s1);
+	private Long saveService(Service s) {
+		em.persist(s);
+		return s.getId();
 	}
 	
 	/****************************SAVE***************************/
@@ -61,9 +63,8 @@ public class ServiceDAOimplTest {
 	@Test
 	public void nominalSave() {
 		Service s = new Service("ONI", 200f);
-		Service serviceSaved = serviceDAO.save(s);
-		assertThat(serviceSaved.getLabel(), is(s.getLabel()));
-		assertThat(serviceSaved.getId(), is(notNullValue()));
+		Long id = serviceDAO.save(s);
+		assertThat(id, is(notNullValue()));
 	}
 
 	/**
@@ -72,7 +73,8 @@ public class ServiceDAOimplTest {
 	@Test(expected=PersistenceException.class)
 	public void violationLabelConstraintSave() {
 		
-		insertService();
+		saveService(new Service("Others", 10f));
+		
 		Service s = new Service("Others", 10f);
 		serviceDAO.save(s);
 		em.flush();
@@ -86,34 +88,36 @@ public class ServiceDAOimplTest {
 	@Test
 	public void nominalUpdate() {
 		Service s = new Service("ONI", 200f);
-		Service serviceSaved = serviceDAO.save(s);
+		Long id = saveService(s);
+		Service serviceSaved = em.find(Service.class, id);
 		
 		serviceSaved.setLabel("Passport");
+		serviceDAO.update(serviceSaved);
 		
-		Service serviceUpdated = serviceDAO.update(serviceSaved);
+		Service serviceUpdated = em.find(Service.class, id);
 		
-		assertThat(serviceUpdated.getId(), is(serviceSaved.getId()));
 		assertThat(serviceUpdated.getLabel(), is("Passport"));
 	}
 	
 	/**
-	 * Update non existing service.
-	 * At first a service with a null id and then with an unknown id
+	 * Update with null as service.
 	 */
-	@Test
+	@Test(expected=InvalidDataAccessApiUsageException.class)
+	public void updateWithNullService() {
+		serviceDAO.update(null);
+		fail("You cannot update a null service");
+	}
+	
+	/**
+	 * Update non existing service.
+	 */
+	@Test(expected=EmptyResultDataAccessException.class)
 	public void updateNotExistingService() {
-		
 		Service service = new Service();
 		service.setId(null);
 		
-		Service serviceUpdated = serviceDAO.update(service);
-		
-		assertThat(serviceUpdated, is(nullValue()));
-		
-		service.setId(0L);
-		serviceUpdated = serviceDAO.update(service);
-		
-		assertThat(serviceUpdated, is(nullValue()));
+		serviceDAO.update(service);
+		fail("You cannot update a non-existing service");
 	}
 	
 	/****************************DELETE***************************/
@@ -124,22 +128,22 @@ public class ServiceDAOimplTest {
 	@Test
 	public void nominalDelete() {
 		Service s = new Service("ONI", 200f);
-		Service serviceSaved = serviceDAO.save(s);
+		Long id = saveService(s);
 		
-		Service serviceDeleted = serviceDAO.delete(serviceSaved.getId());
+		serviceDAO.delete(id);
 		
-		assertThat(serviceDeleted.getId(), is(serviceSaved.getId()));
+		Service serviceDeleted = em.find(Service.class, id);
+		
+		assertThat(serviceDeleted, is(nullValue()));
 	}
 	
 	/**
 	 * Delete non existing service
 	 */
-	@Test
+	@Test(expected=InvalidDataAccessApiUsageException.class)
 	public void deleteNotExistingService() {
-		
-		Service serviceDeleted = serviceDAO.delete(0);
-		
-		assertThat(serviceDeleted, is(nullValue()));
+		serviceDAO.delete(0);
+		fail("You cannot delete a non-existing service");
 	}
 
 
@@ -151,11 +155,16 @@ public class ServiceDAOimplTest {
 	@Test
 	public void getExistingService() {
 		Service s1 = new Service("ONI", 200f);
-		Service serviceSaved = serviceDAO.save(s1);
-		Service serviceFound = serviceDAO.get(serviceSaved.getId());
+		Long id = saveService(s1);
 		
-		assertThat(serviceFound.getId(), is(serviceSaved.getId()));
-		assertThat(serviceFound.getLabel(), is(serviceSaved.getLabel()));
+		Service serviceFound = serviceDAO.get(id);
+		
+		Service serviceFoundByName = serviceDAO.getByLabel("ONI");
+		
+		assertThat(serviceFound.getId(), is(id));
+		assertThat(serviceFound.getLabel(), is("ONI"));
+		
+		assertThat(serviceFound.getId(), is(serviceFoundByName.getId()));
 	}
 	
 	
@@ -164,8 +173,17 @@ public class ServiceDAOimplTest {
 	 */
 	@Test
 	public void getNotExistingService() {
-		Service serviceFound = serviceDAO.get(0);
+		Service serviceFound = serviceDAO.get(0L);
 		assertThat(serviceFound, is(nullValue()));
+	}
+	
+	/**
+	 * Attempt to get a non existing service by a name
+	 */
+	@Test(expected=EmptyResultDataAccessException.class)
+	public void getNotExistingServiceByName() {
+		serviceDAO.getByLabel("nothing");
+		fail("There is no service with 'nothing' as name.");
 	}
 	
 	/****************************GET ALL***************************/
@@ -179,9 +197,9 @@ public class ServiceDAOimplTest {
 		Service s2 = new Service("ONI2", 10f);
 		Service s3 = new Service("ONI3", 10f);
 		
-		serviceDAO.save(s1);
-		serviceDAO.save(s2);
-		serviceDAO.save(s3);
+		saveService(s1);
+		saveService(s2);
+		saveService(s3);
 		
 		List<Service> services = serviceDAO.getAll();
 		assertThat(services.size(), is(3));

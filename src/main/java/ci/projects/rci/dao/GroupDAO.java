@@ -13,8 +13,8 @@ import ci.projects.rci.model.Group;
  */
 public interface GroupDAO {
 	
-	Group save(Group group);
-	Group delete(String name);
+	Long save(Group group);
+	void delete(Long id);
 	Group get(Long id);
 	Group getByName(String name);
 	List<Group> getAll();

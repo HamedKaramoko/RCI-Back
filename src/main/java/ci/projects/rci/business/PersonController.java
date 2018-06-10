@@ -5,6 +5,8 @@ package ci.projects.rci.business;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,8 @@ import io.swagger.annotations.ApiOperation;
 @Transactional
 public class PersonController{
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(PersonController.class);
+	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
@@ -59,7 +63,7 @@ public class PersonController{
 
 	@ApiOperation(value="Update one person", response=Person.class)
 	@RequestMapping(method=RequestMethod.PUT, consumes={MediaType.APPLICATION_JSON_VALUE})
-	public ResponseEntity<Person> updateUser(@RequestBody Person personToUpdate) {
+	public ResponseEntity<?> updateUser(@RequestBody Person personToUpdate) {
 		personDAO.update(personToUpdate);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
@@ -67,7 +71,7 @@ public class PersonController{
 	@ApiOperation(value="Delete one person")
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<String> deleteUser(@PathVariable("id") long idPersonToDelete) {
+	public ResponseEntity<?> deleteUser(@PathVariable("id") long idPersonToDelete) {
 		personDAO.delete(idPersonToDelete);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
@@ -89,7 +93,7 @@ public class PersonController{
 			personFound = personDAO.getByLogin(login);
 			httpStatus = HttpStatus.OK;
 		}catch(EmptyResultDataAccessException erdae) {
-			httpStatus = HttpStatus.NOT_FOUND;
+			LOGGER.info("Person with login '{}' not found", login);
 		}
 		return new ResponseEntity<Person>(personFound, httpStatus);
 	}
