@@ -86,7 +86,7 @@ public class ServiceController {
 			serviceGetted = serviceDAO.getByLabel(label);
 			httpStatus = HttpStatus.OK;
 		}catch (EmptyResultDataAccessException erdae) {
-			LOGGER.info("Service with label '{}' not found", label);
+			LOGGER.info("Service with label '{}' not found because of {}", label, erdae);
 		}
 		return new ResponseEntity<Service>(serviceGetted, httpStatus);
 	}

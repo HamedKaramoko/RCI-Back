@@ -93,7 +93,7 @@ public class PersonController{
 			personFound = personDAO.getByLogin(login);
 			httpStatus = HttpStatus.OK;
 		}catch(EmptyResultDataAccessException erdae) {
-			LOGGER.info("Person with login '{}' not found", login);
+			LOGGER.info("Person with login '{}' not found because of {}", login, erdae);
 		}
 		return new ResponseEntity<Person>(personFound, httpStatus);
 	}

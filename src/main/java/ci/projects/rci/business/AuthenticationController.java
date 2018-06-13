@@ -3,6 +3,8 @@
  */
 package ci.projects.rci.business;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,13 +33,15 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value="/authentication")
 public class AuthenticationController {
 	
-	@Autowired
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
+	
+	//@Autowired
 	private JwtTokenService jwtTokenService;
 	
-	@Autowired
+	//@Autowired
 	private AuthenticationService authenticationService;
 
-	/*@Autowired
+	@Autowired
 	public void setJwtTokenService(JwtTokenService jwtTokenService) {
 		this.jwtTokenService = jwtTokenService;
 	}
@@ -45,7 +49,7 @@ public class AuthenticationController {
 	@Autowired
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
-	}*/
+	}
 
 	@ApiOperation(value="Sign In", response=Person.class)
 	@RequestMapping(value="/signin", method=RequestMethod.POST, consumes={MediaType.APPLICATION_JSON_VALUE}, produces={MediaType.APPLICATION_JSON_VALUE})
@@ -67,6 +71,7 @@ public class AuthenticationController {
             JwtTokens tokens = jwtTokenService.refreshJwtToken(refreshRequest.getRefreshToken());
             return ResponseEntity.ok().body(tokens);
         } catch (Exception e) {
+        	LOGGER.debug("An error occured because of : {}", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
 	}

@@ -72,7 +72,7 @@ public class GroupController {
 			foundGroup = groupDAO.getByName(name);
 			httpStatus = HttpStatus.OK;
 		}catch(EmptyResultDataAccessException erdae) {
-			LOGGER.info("Group with name '{}' not found", name);
+			LOGGER.info("Group with name '{}' not found because of {}", name, erdae);
 		}
 		return new ResponseEntity<Group>(foundGroup, httpStatus);
 	}

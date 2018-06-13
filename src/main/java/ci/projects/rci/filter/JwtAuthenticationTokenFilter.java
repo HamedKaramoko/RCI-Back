@@ -4,6 +4,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
@@ -25,6 +28,8 @@ import java.util.Optional;
 
 @Component
 public class JwtAuthenticationTokenFilter extends GenericFilterBean {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
 
 	private static final String BEARER = "Bearer";
 
@@ -54,9 +59,11 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
 				authentication = authenticationService.getAuthentication(claims);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			} catch (ExpiredJwtException exception) {
+				LOGGER.error(exception.getMessage());
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "error.jwt.expired");
 				return;
 			} catch (JwtException exception) {
+				LOGGER.error(exception.getMessage());
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "error.jwt.invalid");
 				return;
 			}
